@@ -163,10 +163,11 @@ def main(m, n):
         y_av[i] = round(y_av[i], 3)
 
     if n == 14:
-        t = PrettyTable(['N', 'norm_x_0', 'norm_x_1', 'norm_x_2', 'norm_x_3', 'norm_x_1_x_2', 'norm_x_1_x_3',
-                         'norm_x_2_x_3', 'norm_x_1_x_2_x_3', 'norm_x_1_x_1', 'norm_x_2_x_2', 'norm_x_3_x_3', 'x_0',
-                         'x_1', 'x_2', 'x_3', 'x_1_x_2', 'x_1_x_3', 'x_2_x_3', 'x_1_x_2_x_3', 'x_1_x_1', 'x_2_x_2',
-                         'x_3_x_3'] + [f'y_{i + 1}' for i in range(m)] + ['y_av'])
+        t1 = PrettyTable(['N', 'norm_x_0', 'norm_x_1', 'norm_x_2', 'norm_x_3', 'norm_x_1_x_2', 'norm_x_1_x_3',
+                          'norm_x_2_x_3', 'norm_x_1_x_2_x_3', 'norm_x_1_x_1', 'norm_x_2_x_2', 'norm_x_3_x_3', ] +
+                         [f'y_{i + 1}' for i in range(m)] + ['y_av'])
+        t2 = PrettyTable(['N', 'x_0', 'x_1', 'x_2', 'x_3', 'x_1_x_2', 'x_1_x_3', 'x_2_x_3', 'x_1_x_2_x_3', 'x_1_x_1',
+                          'x_2_x_2', 'x_3_x_3'] + [f'y_{i + 1}' for i in range(m)] + ['y_av'])
 
     if n == 8:
         t = PrettyTable(['N', 'norm_x_0', 'norm_x_1', 'norm_x_2', 'norm_x_3', 'norm_x_1_x_2', 'norm_x_1_x_3',
@@ -177,9 +178,16 @@ def main(m, n):
             ['N', 'norm_x_0', 'norm_x_1', 'norm_x_2', 'norm_x_3', 'x_0', 'x_1', 'x_2', 'x_3'] +
             [f'y_{i + 1}' for i in range(m)] + ['y_av'])
 
-    for i in range(n):
-        t.add_row([i + 1] + list(norm_x[i]) + list(x[i]) + list(y[i]) + [y_av[i]])
-    print(t)
+    if n == 14:
+        for i in range(n):
+            t1.add_row([i + 1] + list(norm_x[i]) + list(y[i]) + [y_av[i]])
+            t2.add_row([i + 1] + list(x[i]) + list(y[i]) + [y_av[i]])
+        print(t1)
+        print(t2)
+    else:
+        for i in range(n):
+            t.add_row([i + 1] + list(norm_x[i]) + list(x[i]) + list(y[i]) + [y_av[i]])
+        print(t)
 
     m_ij = []
     for i in range(len(x[0])):
@@ -223,7 +231,7 @@ def main(m, n):
     g_p = max(s_i) / sum(s_i)
 
     table = {2: 0.75, 3: 0.6841, 4: 0.6287, 5: 0.5892, 6: 0.5598, 7: 0.5365, 8: 0.5175, 9: 0.5017, 10: 0.4884,
-             range(11, 17): 0.4366, range(17, 37): 0.3720, range(37, 2**100): 0.3093}
+             range(11, 17): 0.4366, range(17, 37): 0.3720, range(37, 2 ** 100): 0.3093}
     g_t = get_value(table, m)
 
     if g_p < g_t:
@@ -236,14 +244,12 @@ def main(m, n):
     s2_b = sum(s_i) / n
     s2_beta_s = s2_b / (n * m)
     s_beta_s = sqrt(s2_beta_s)
-    if n == 14:
-        beta_i = b_i
-    else:
-        beta_i = [sum([norm_x[i][j] * y_av[i] for i in range(len(norm_x))]) / n for j in range(len(norm_x[0]))]
+    beta_i = [sum([norm_x[i][j] * y_av[i] for i in range(len(norm_x))]) / n for j in range(len(norm_x[0]))]
     beta_i = [round(i, 3) for i in beta_i]
 
     t = [abs(i) / s_beta_s for i in beta_i]
-
+    if n == 14:
+        beta_i = b_i
     f_3 = f_1 * f_2
     t_table = {4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228, 11: 2.201, 12: 2.179, 13: 2.160,
                14: 2.145, 15: 2.131, 16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086, 21: 2.08, 22: 2.074,
@@ -256,8 +262,8 @@ def main(m, n):
             d -= 1
     if n == d:
         n = 8 if n == 4 else 14
-        print(f"n=d\nStart again with n = {n} and m = m + 1 = {m + 1}")
-        return main(m=m + 1, n=n)
+        print(f"n=d\nStart again with n = {n} and m = {m}")
+        return main(m=m, n=n)
     if n == 14:
         print(
             f"\nThe naturalized simplified regression equation: "
@@ -265,7 +271,7 @@ def main(m, n):
             f"{beta_i[2]:.5f} * x2 + {beta_i[3]:.5f} * x3 + {beta_i[4]:.5f} * x1 * x2 + "
             f"{beta_i[5]:.5f} * x1 * x3 + {beta_i[6]:.5f} * x2 * x3 + {beta_i[7]:.5f} * x1 * x2 * x3 + "
             f"{beta_i[8]:.5f} * x1 * x1 + {beta_i[9]:.5f} * x2 * x2 + {beta_i[10]:.5f} * x3 * x3")
-        # check_i = [round(sum(beta_i[j] * i[j] for j in range(len(beta_i))), 3) for i in x]
+        check_i = [round(sum(beta_i[j] * i[j] for j in range(len(beta_i))), 3) for i in x]
 
     if n == 8:
         print(
@@ -288,8 +294,6 @@ def main(m, n):
     print("\n[ Fisher's test ]")
     f_4 = n - d
     s2_ad = m / f_4 * sum([(check_i[i] - y_av[i]) ** 2 for i in range(len(y_av))])
-    print(check_i)
-    print(y_av)
     f_p = s2_ad / s2_b
     f_t = {
         1: [164.4, 199.5, 215.7, 224.6, 230.2, 234, 235.8, 237.6],
@@ -326,8 +330,8 @@ def main(m, n):
         print(
             f"fp = {f_p} > ft = {get_value(f_t, f_3)[f_4]}.\n"
             f"The mathematical model is not adequate to the experimental data\n"
-            f"Start again with m = m + 1 = {m + 1} and n = {n}")
-        return main(m=m + 1, n=n)
+            f"Start again with m = {m} and n = {n}")
+        return main(m=m, n=n)
     else:
         print(
             f"fP = {f_p} < fT = {get_value(f_t, f_3)[f_4]}.\n"
