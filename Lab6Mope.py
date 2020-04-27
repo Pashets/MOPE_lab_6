@@ -1,4 +1,5 @@
 from copy import deepcopy
+from datetime import datetime
 from math import sqrt
 from random import random
 
@@ -225,6 +226,7 @@ def main(m, n):
         print(f'ŷ{i + 1} = {check_i[i]}, y_av{i + 1} = {y_av[i]}')
 
     print("\n[ Kohren's test ]")
+    start_time = datetime.now()
     f_1 = m - 1
     f_2 = n
     s_i = [sum([(i - y_av[j]) ** 2 for i in y[j]]) / m for j in range(len(y))]
@@ -235,12 +237,15 @@ def main(m, n):
     g_t = get_value(table, m)
 
     if g_p < g_t:
+        print(f"Kohren's test lasted {(datetime.now() - start_time).total_seconds()} seconds")
         print(f"The variance is homogeneous: Gp = {g_p:.5} < Gt = {g_t}")
     else:
+        print(f"Kohren's test lasted {(datetime.now() - start_time).total_seconds()} seconds")
         print(f"The variance is not homogeneous Gp = {g_p:.5} > Gt = {g_t}\nStart again with m = m + 1 = {m + 1}")
         return main(m=m + 1, n=n)
 
     print("\n[ Student's test ]")
+    start_time = datetime.now()
     s2_b = sum(s_i) / n
     s2_beta_s = s2_b / (n * m)
     s_beta_s = sqrt(s2_beta_s)
@@ -260,6 +265,7 @@ def main(m, n):
         if get_value(t_table, f_3) > t[i]:
             beta_i[i] = 0
             d -= 1
+    print(f"Student's test lasted {(datetime.now() - start_time).total_seconds()} seconds")
     if n == d:
         n = 8 if n == 4 else 14
         print(f"n=d\nStart again with n = {n} and m = {m}")
@@ -292,6 +298,7 @@ def main(m, n):
         print(f'ŷ{i + 1} = {check_i[i]}, y_av{i + 1} = {y_av[i]}')
 
     print("\n[ Fisher's test ]")
+    start_time = datetime.now()
     f_4 = n - d
     s2_ad = m / f_4 * sum([(check_i[i] - y_av[i]) ** 2 for i in range(len(y_av))])
     f_p = s2_ad / s2_b
@@ -326,6 +333,7 @@ def main(m, n):
         range(120, 2 ** 100): [3.8, 3, 2.6, 2.4, 2.2, 2.1, 2, 2, 1.9, 1.9, 1.9, 1.8, 1.8]
     }
     if f_p > get_value(f_t, f_3)[f_4]:
+        print(f"Fisher's test lasted {(datetime.now() - start_time).total_seconds()} seconds")
         n = 8 if n == 4 else 14
         print(
             f"fp = {f_p} > ft = {get_value(f_t, f_3)[f_4]}.\n"
@@ -333,6 +341,7 @@ def main(m, n):
             f"Start again with m = {m} and n = {n}")
         return main(m=m, n=n)
     else:
+        print(f"Fisher's test lasted {(datetime.now() - start_time).total_seconds()} seconds")
         print(
             f"fP = {f_p} < fT = {get_value(f_t, f_3)[f_4]}.\n"
             f"The mathematical model is adequate to the experimental data\n")
